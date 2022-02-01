@@ -4,6 +4,7 @@ import itertools
 import numpy as np
 
 def pdist(a, b, metric):
+    # print('metric: ', metric)
     return scipy_pdist([a, b], metric=metric)[0]
 
 # Need own implementation of jaccard because scipy's

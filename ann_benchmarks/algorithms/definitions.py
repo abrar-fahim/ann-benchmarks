@@ -17,6 +17,7 @@ Definition = collections.namedtuple(
 
 
 def instantiate_algorithm(definition):
+    
     print('Trying to instantiate %s.%s(%s)' %
           (definition.module, definition.constructor, definition.arguments))
     module = importlib.import_module(definition.module)
@@ -32,12 +33,18 @@ class InstantiationStatus(Enum):
 
 def algorithm_status(definition):
     try:
+        from pathlib import Path
+        import sys
+        # print('APPENDINGGGG')
+        path_root = Path(__file__).parents[2]
+        # sys.path.append(str(path_root))
         module = importlib.import_module(definition.module)
         if hasattr(module, definition.constructor):
             return InstantiationStatus.AVAILABLE
         else:
             return InstantiationStatus.NO_CONSTRUCTOR
     except ImportError:
+        print(module)
         return InstantiationStatus.NO_MODULE
 
 

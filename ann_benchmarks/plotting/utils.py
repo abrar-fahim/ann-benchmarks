@@ -41,10 +41,18 @@ def compute_metrics(true_nn_distances, res, metric_1, metric_2,
                     recompute=False):
     all_results = {}
     for i, (properties, run) in enumerate(res):
+        # print('run: ', str(i), ', ', run)
         algo = properties['algo']
         algo_name = properties['name']
         # cache distances to avoid access to hdf5 file
         run_distances = numpy.array(run['distances'])
+        neighbors = numpy.array(run['neighbors'])
+
+        # print('POINT ', str(i))
+        # print('NEIGHBORS ', neighbors[:5])
+        # print('run distances ', run_distances[:5])
+
+        # print('true nn distances ', true_nn_distances)
         if recompute and 'metrics' in run:
             del run['metrics']
         metrics_cache = get_or_create_metrics(run)
@@ -55,7 +63,8 @@ def compute_metrics(true_nn_distances, res, metric_1, metric_2,
         metric_2_value = metrics[metric_2]['function'](
             true_nn_distances,
             run_distances, metrics_cache, properties)
-
+        # metric_1 is recall
+        # metric_2 s queries per second
         print('%3d: %80s %12.3f %12.3f' %
               (i, algo_name, metric_1_value, metric_2_value))
 

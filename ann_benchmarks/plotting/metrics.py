@@ -14,9 +14,14 @@ def get_recall_values(dataset_distances, run_distances, count, threshold,
                       epsilon=1e-3):
     recalls = np.zeros(len(run_distances))
     for i in range(len(run_distances)):
+
         t = threshold(dataset_distances[i], count, epsilon)
         actual = 0
+
+        # print('t: ', t)
+            
         for d in run_distances[i][:count]:
+            # print('d: ', d)
             if d <= t:
                 actual += 1
         recalls[i] = actual

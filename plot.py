@@ -148,6 +148,7 @@ if __name__ == "__main__":
     count = int(args.count)
     unique_algorithms = get_unique_algorithms()
     results = load_all_results(args.dataset, count, args.batch)
+    # print('results ', results)
     linestyles = create_linestyles(sorted(unique_algorithms))
     runs = compute_metrics(np.array(dataset["distances"]),
                            results, args.x_axis, args.y_axis, args.recompute)

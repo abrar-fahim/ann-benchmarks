@@ -30,6 +30,8 @@ def run_individual_query(algo, X_train, X_test, distance, count, run_count,
         # a bit dumb but can't be a scalar since of Python's scoping rules
         n_items_processed = [0]
 
+        # print('X train', X_train)
+
         def single_query(v):
             if prepared_queries:
                 algo.prepare_query(v, count)
@@ -41,7 +43,7 @@ def run_individual_query(algo, X_train, X_test, distance, count, run_count,
                 start = time.time()
                 candidates = algo.query(v, count)
                 total = (time.time() - start)
-            candidates = [(int(idx), float(metrics[distance]['distance'](v, X_train[idx])))  # noqa
+            candidates = [(int(idx), float(metrics[distance]['distance'](v, X_train[idx])))  # noqa # tuple of values, 0 = candidate point index, 1 = distance between query point and candidate point
                           for idx in candidates]
             n_items_processed[0] += 1
             if n_items_processed[0] % 1000 == 0:
@@ -52,6 +54,8 @@ def run_individual_query(algo, X_train, X_test, distance, count, run_count,
             return (total, candidates)
 
         def batch_query(X):
+
+            
             if prepared_queries:
                 algo.prepare_batch_query(X, count)
                 start = time.time()
@@ -62,9 +66,17 @@ def run_individual_query(algo, X_train, X_test, distance, count, run_count,
                 algo.batch_query(X, count)
                 total = (time.time() - start)
             results = algo.get_batch_results()
+
+            # print('results', results)
             candidates = [[(int(idx), float(metrics[distance]['distance'](v, X_train[idx])))  # noqa
                            for idx in single_results]
                           for v, single_results in zip(X, results)]
+            
+            # print('X ', X[:5])
+
+            # print('candidates', candidates)
+
+            # print('candidates in batch_query', candidates)
             return [(total / float(len(X)), v) for v in candidates]
 
         if batch:
@@ -112,6 +124,8 @@ function""" % (definition.module, definition.constructor, definition.arguments)
 
     X_train, X_test = dataset_transform(D)
 
+    # print('X train ', X_train)
+
     try:
         prepared_queries = False
         if hasattr(algo, "supports_prepared_queries"):
@@ -138,6 +152,8 @@ function""" % (definition.module, definition.constructor, definition.arguments)
                 algo.set_query_arguments(*query_arguments)
             descriptor, results = run_individual_query(
                 algo, X_train, X_test, distance, count, run_count, batch)
+
+            # print('results ', results)
             descriptor["build_time"] = build_time
             descriptor["index_size"] = index_size
             descriptor["algo"] = definition.algorithm
